@@ -40,10 +40,11 @@ def register(request):
         return JsonResponse({"message": "Candidate registered successfully"}, status=201)
 
     except Exception as e:
-        if request.method != "POST":
-            return JsonResponse({"error": "Only POST requests are allowed"}, status=405)
+        if "Duplicate entry" in str(e):
+            return JsonResponse({"error": "A candidate with this email already exists"}, status=400)
         else:
             return JsonResponse({"error": str(e)}, status=500)
+
 
 
 @csrf_exempt

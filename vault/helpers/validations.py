@@ -17,15 +17,15 @@ class CandidateForm(forms.Form):
 
    
     # Validate the date of birth
-    def date_of_birth_validator(self):
+    def clean_date_of_birth(self):
         if self.cleaned_data.get('date_of_birth') > datetime.now().date():
             raise forms.ValidationError("Date of birth cannot be in the future.")
         return self.cleaned_data.get('date_of_birth')
 
     # Validate the years of experience
-    def years_of_experience_validator(self):
+    def clean_years_of_experience(self):
         if self.cleaned_data.get('years_of_experience') < 0:
-            raise forms.ValidationError("Years of experience cannot be negative.")
+            raise forms.ValidationError("Years of experience cannot be negative or zero.")
         return self.cleaned_data.get('years_of_experience')
 
     # Validate the resume file
