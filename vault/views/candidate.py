@@ -3,11 +3,10 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from django.db import IntegrityError
 
 from vault.models.candidate import Candidate
-from vault.helpers.validations import CandidateForm
-
-from vault.models.candidate import DEPARTMENT_CHOICES
+from vault.utils.validations import CandidateForm
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -17,33 +16,36 @@ def register(request):
         if len(request.POST) == 0:
             return JsonResponse({"error": "Request body is required"}, status=400)
             
-        # Parse the request body as dictionary
-        data = CandidateForm(request.POST, request.FILES)
+        # Parse and validate form data
+        form = CandidateForm(request.POST, request.FILES)
 
-        if not data.is_valid():
-            return JsonResponse({"error": data.errors}, status=400)
+        if not form.is_valid():
+            return JsonResponse({"error": form.errors}, status=400)
         
-
-        # Create the candidate object
+        # Create candidate instance without file first
         candidate = Candidate(
-            full_name=data.cleaned_data.get('full_name'),
-            date_of_birth=data.cleaned_data.get('date_of_birth'),
-            years_of_experience=data.cleaned_data.get('years_of_experience'),
-            department_id=data.cleaned_data.get('department_id'),
-            resume=data.cleaned_data.get('resume'),
-            email=data.cleaned_data.get('email')
+            full_name=form.cleaned_data['full_name'],
+            date_of_birth=form.cleaned_data['date_of_birth'],
+            years_of_experience=form.cleaned_data['years_of_experience'],
+            department_id=form.cleaned_data['department_id'],
+            email=form.cleaned_data['email']
         )
-        
-        # Save the candidate object
+
+        # Try to save without file first to check for unique constraint
         candidate.save()
+        
+        # If save succeeds, then handle file upload
+        if form.cleaned_data.get('resume'):
+            candidate.resume = form.cleaned_data['resume']
+            candidate.save()
 
         return JsonResponse({"message": "Candidate registered successfully"}, status=201)
 
+    except IntegrityError:
+        return JsonResponse({"error": "A candidate with this email already exists"}, status=400)
+
     except Exception as e:
-        if "Duplicate entry" in str(e):
-            return JsonResponse({"error": "A candidate with this email already exists"}, status=400)
-        else:
-            return JsonResponse({"error": str(e)}, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 
@@ -51,14 +53,18 @@ def register(request):
 @require_http_methods(["GET"])
 def list_candidates(request):
     try:
-        # TODO: will be moved to a middleware class in a separate file
         if request.headers.get('X-ADMIN') != '1':
             return JsonResponse({"error": "Unauthorized"}, status=401)
         
         # Validate department ID exists in choices
         department_id = int(request.GET.get('department_id')) if request.GET.get('department_id') else None
         
-        candidates = Candidate.objects.filter(department_id=department_id) if department_id else Candidate.objects.all()
+        # Get all candidates, filtered by department if specified
+        if department_id:
+            candidates = Candidate.objects.filter(department_id=department_id).order_by('created_at')
+        else:
+            candidates = Candidate.objects.all().order_by('created_at')
+
         paginator = Paginator(candidates, 10)
         
         page_number = int(request.GET.get('page', 1))
@@ -91,22 +97,18 @@ def list_candidates(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-
 @csrf_exempt
 @require_http_methods(["GET"])
 def download_resume(request, candidate_id):
     try:
-        # TODO: will be moved to a middleware class in a separate file
-        # if request.headers.get('X-ADMIN') != '1':
-        #     return JsonResponse({"error": "Unauthorized"}, status=401)
+        if request.headers.get('X-ADMIN') != '1':
+            return JsonResponse({"error": "Unauthorized"}, status=401)
 
         candidate = Candidate.objects.get(id=candidate_id)
         
-        resume_path = candidate.resume.path
-        with open(resume_path, 'rb') as file:
-            response = HttpResponse(file.read(), content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="{candidate.resume.name}"'
-            return response
+        response = HttpResponse(candidate.resume.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{candidate.resume.name}"'
+        return response
         
     except Candidate.DoesNotExist:
         return JsonResponse({"error": "Candidate not found"}, status=404)

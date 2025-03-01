@@ -33,7 +33,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'vault.apps.VaultConfig',
-    
+    'storages',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -136,3 +137,27 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Storage Configuration
+STORAGE_TYPE = os.getenv('STORAGE_TYPE', 'local')
+
+STORAGE_CONFIG = {
+    'local': {
+        'MEDIA_URL': '/media/',
+        'MEDIA_ROOT': os.path.join(BASE_DIR, 'media'),
+    },
+    's3': {
+        'AWS_ACCESS_KEY_ID': os.getenv('AWS_ACCESS_KEY_ID'),
+        'AWS_SECRET_ACCESS_KEY': os.getenv('AWS_SECRET_ACCESS_KEY'),
+        'AWS_STORAGE_BUCKET_NAME': os.getenv('AWS_STORAGE_BUCKET_NAME'),
+        'AWS_S3_REGION_NAME': os.getenv('AWS_S3_REGION_NAME', 'us-east-1'),
+        'AWS_DEFAULT_ACL': 'private',
+        'AWS_S3_FILE_OVERWRITE': False,
+        'AWS_S3_CUSTOM_DOMAIN': f'{os.getenv("AWS_STORAGE_BUCKET_NAME")}.s3.amazonaws.com',
+    },
+    'azure': {
+        'AZURE_STORAGE_CONNECTION_STRING': os.getenv('AZURE_STORAGE_CONNECTION_STRING'),
+        'AZURE_STORAGE_CONTAINER': os.getenv('AZURE_STORAGE_CONTAINER'),
+    },
+}
