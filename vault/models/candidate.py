@@ -14,7 +14,7 @@ class Candidate(models.Model):
     email = models.EmailField(max_length=255, blank=False, unique=True)
     date_of_birth = models.DateField(blank=False)
     years_of_experience = models.IntegerField(blank=False)
-    department_id = models.IntegerField(choices=DEPARTMENT_CHOICES, blank=False)
+    department_id = models.IntegerField(choices=DEPARTMENT_CHOICES, blank=False, db_index=True)
     resume = models.FileField(upload_to='documents/')
     
     created_at = models.DateTimeField(auto_now_add=True)
