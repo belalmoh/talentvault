@@ -1,5 +1,5 @@
 from django.db import models
-from vault.utils.dynamic_storage import DynamicStorage, get_upload_path
+from vault.utils.dynamic_storage import get_storage, get_upload_path
 
 DEPARTMENT_CHOICES = [
     (1, 'Engineering'),
@@ -18,7 +18,7 @@ class Candidate(models.Model):
     department_id = models.IntegerField(choices=DEPARTMENT_CHOICES, blank=False, db_index=True)
     resume = models.FileField(
         upload_to=get_upload_path,
-        storage=DynamicStorage.get_storage(),
+        storage=get_storage(),
         null=True,
         blank=True
     )
