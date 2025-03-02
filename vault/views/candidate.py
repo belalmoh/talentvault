@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.db import IntegrityError
 
-from vault.models.candidate import Candidate
+from vault.models.candidate import Candidate, DEPARTMENT_CHOICES
 from vault.utils.validations import CandidateForm
 
 @csrf_exempt
@@ -81,10 +81,7 @@ def list_candidates(request):
             'email': c.email,
             'date_of_birth': c.date_of_birth.isoformat(),
             'years_of_experience': c.years_of_experience,
-            'department_id': c.department_id,
-            'resume': c.resume.url if c.resume else None,
-            'created_at': c.created_at.isoformat(),
-            'updated_at': c.updated_at.isoformat()
+            'department': DEPARTMENT_CHOICES[c.department_id][1],
         } for c in page_obj]
         
 
