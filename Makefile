@@ -32,4 +32,7 @@ backend-terminal:
 db-terminal:
 	cd docker && docker-compose --env-file ../.env exec db bash 
 
+# Run tests in the backend container
+test-backend:
+	cd docker && docker-compose --env-file ../.env exec backend python manage.py test vault.tests
 
