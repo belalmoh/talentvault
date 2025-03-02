@@ -1,3 +1,5 @@
 documents/
 media/
+logs/
+
 .env

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'vault.middlewares.logging.LoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'talentvault.urls'
@@ -137,6 +139,63 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Logging Configuration
+
+LOG_DIRECTORY = os.path.join(BASE_DIR, 'logs') # Define the directory where you want to save the log files
+os.makedirs(LOG_DIRECTORY, exist_ok=True) # Ensure the directory exists
+
+def get_log_filename(prefix):
+    return datetime.now().strftime(f'{prefix}_logfile_%Y%m%d.log')
+
+VAULT_LOG_FILE_PATH = os.path.join(LOG_DIRECTORY, get_log_filename('vault'))
+# DJANGO_LOG_FILE_PATH = os.path.join(LOG_DIRECTORY, get_log_filename('django'))
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'vault_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': VAULT_LOG_FILE_PATH,
+            'formatter': 'verbose',
+        },
+        # 'django_file': {
+        #     'level': 'INFO',
+        #     'class': 'logging.FileHandler',
+        #     'filename': DJANGO_LOG_FILE_PATH,
+        #     'formatter': 'verbose',
+        # },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        # 'django': {
+        #     'handlers': ['console', 'django_file'],
+        #     'level': 'INFO',
+        #     'propagate': True,
+        # },
+        'vault.api': {
+            'handlers': ['console', 'vault_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
 
 # Storage Configuration
