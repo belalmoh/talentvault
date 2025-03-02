@@ -2,7 +2,7 @@
 
 # Build and run the application
 build:
-	cd docker && docker-compose --env-file ../.env up --build -d && docker-compose --env-file ../.env exec backend python manage.py migrate
+	cd docker && docker-compose --env-file ../.env up --build -d && docker-compose --env-file ../.env exec backend python manage.py makemigrations && docker-compose --env-file ../.env exec backend python manage.py migrate
 
 # Run the application without rebuilding
 run:
