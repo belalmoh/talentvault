@@ -1,4 +1,4 @@
-.PHONY: build run stop clean run-backend run-db backend-terminal db-terminal
+.PHONY: build run stop clean run-backend run-db backend-terminal db-terminal test-backend
 
 # Build and run the application
 build:
