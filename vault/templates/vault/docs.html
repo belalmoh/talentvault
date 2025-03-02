@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TalentVault API Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            border-bottom: 2px solid #eaecef;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            margin-top: 25px;
+        }
+
+        code {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo,
+                monospace;
+            background-color: #f6f8fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 85%;
+        }
+
+        pre {
+            background-color: #f6f8fa;
+            border-radius: 3px;
+            padding: 16px;
+            overflow: auto;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #dfe2e5;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f6f8fa;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .get {
+            background-color: #61affe;
+        }
+
+        .post {
+            background-color: #49cc90;
+        }
+
+        .endpoint {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #dfe2e5;
+            border-radius: 5px;
+        }
+
+        .url {
+            font-family: monospace;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .response-code {
+            font-weight: bold;
+        }
+
+        .success {
+            color: #49cc90;
+        }
+
+        .error {
+            color: #f93e3e;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>TalentVault API Documentation</h1>
+
+    <h2>Overview</h2>
+    <p>
+        This document provides details about the TalentVault API endpoints,
+        request formats, and response structures.
+    </p>
+
+    <h2>Base URL</h2>
+    <p>All API endpoints are prefixed with <code>/vault/</code></p>
+
+    <h2>Authentication</h2>
+    <p>
+        Admin endpoints require the <code>X-ADMIN</code> header with a value of
+        <code>1</code>.
+    </p>
+
+    <h2>Endpoints</h2>
+
+    <div class="endpoint">
+        <h3>
+            <span class="method post">POST</span>
+            <span class="url">/vault/candidate/register</span>
+        </h3>
+        <p>Register a new candidate with their details and optional resume.</p>
+
+        <h4>Content-Type</h4>
+        <p><code>multipart/form-data</code></p>
+
+        <h4>Request Parameters</h4>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>full_name</td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Full name of the candidate</td>
+            </tr>
+            <tr>
+                <td>email</td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Email address (must be unique)</td>
+            </tr>
+            <tr>
+                <td>date_of_birth</td>
+                <td>date</td>
+                <td>Yes</td>
+                <td>Date of birth in YYYY-MM-DD format</td>
+            </tr>
+            <tr>
+                <td>years_of_experience</td>
+                <td>integer</td>
+                <td>Yes</td>
+                <td>Years of professional experience</td>
+            </tr>
+            <tr>
+                <td>department_id</td>
+                <td>integer</td>
+                <td>Yes</td>
+                <td>Department ID (1-6)</td>
+            </tr>
+            <tr>
+                <td>resume</td>
+                <td>file</td>
+                <td>No</td>
+                <td>PDF resume file</td>
+            </tr>
+        </table>
+
+        <h4>Responses</h4>
+
+        <p class="response-code success">201 Created</p>
+        <pre><code>{
+  "message": "Candidate registered successfully"
+}</code></pre>
+
+        <p class="response-code error">400 Bad Request</p>
+        <pre><code>{
+  "error": "A candidate with this email already exists"
+}</code></pre>
+
+        <p>or</p>
+
+        <pre><code>{
+  "error": {
+    "full_name": ["This field is required."],
+    "email": ["Enter a valid email address."]
+  }
+}</code></pre>
+
+        <p class="response-code error">500 Internal Server Error</p>
+        <pre><code>{
+  "error": "Error message"
+}</code></pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>
+            <span class="method get">GET</span>
+            <span class="url">/vault/candidates</span>
+        </h3>
+        <p>
+            List all candidates with pagination and optional department filtering.
+        </p>
+
+        <h4>Headers</h4>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Required</th>
+            </tr>
+            <tr>
+                <td>X-ADMIN</td>
+                <td>1</td>
+                <td>Yes</td>
+            </tr>
+        </table>
+
+        <h4>Query Parameters</h4>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>department_id</td>
+                <td>integer</td>
+                <td>No</td>
+                <td>Filter by department ID</td>
+            </tr>
+            <tr>
+                <td>page</td>
+                <td>integer</td>
+                <td>No</td>
+                <td>Page number (default: 1)</td>
+            </tr>
+        </table>
+
+        <h4>Responses</h4>
+
+        <p class="response-code success">200 OK</p>
+        <pre><code>{
+  "candidates": [
+    {
+      "id": 1,
+      "full_name": "John Doe",
+      "email": "john.doe@example.com",
+      "date_of_birth": "1990-01-01",
+      "years_of_experience": 5,
+      "department": "Engineering"
+    },
+    {
+      "id": 2,
+      "full_name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "date_of_birth": "1992-05-15",
+      "years_of_experience": 3,
+      "department": "Marketing"
+    }
+  ],
+  "total_pages": 1,
+  "current_page": 1
+}</code></pre>
+
+        <p class="response-code error">401 Unauthorized</p>
+        <pre><code>{
+  "error": "Unauthorized"
+}</code></pre>
+
+        <p class="response-code error">400 Bad Request</p>
+        <pre><code>{
+  "error": "Page number must be between 1 and 5"
+}</code></pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>
+            <span class="method get">GET</span>
+            <span class="url">/vault/candidate/{candidate_id}/resume</span>
+        </h3>
+        <p>Download a candidate's resume file.</p>
+
+        <h4>Headers</h4>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Required</th>
+            </tr>
+            <tr>
+                <td>X-ADMIN</td>
+                <td>1</td>
+                <td>Yes</td>
+            </tr>
+        </table>
+
+        <h4>Path Parameters</h4>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>candidate_id</td>
+                <td>integer</td>
+                <td>Yes</td>
+                <td>ID of the candidate</td>
+            </tr>
+        </table>
+
+        <h4>Responses</h4>
+
+        <p class="response-code success">200 OK</p>
+        <p>File download (PDF)</p>
+
+        <p class="response-code error">401 Unauthorized</p>
+        <pre><code>{
+  "error": "Unauthorized"
+}</code></pre>
+
+        <p class="response-code error">404 Not Found</p>
+        <pre><code>{
+  "error": "Candidate not found"
+}</code></pre>
+    </div>
+
+    <h2>Department IDs</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Department</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Engineering</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Sales</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Marketing</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Human Resources</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Finance</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Operations</td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -29,6 +29,9 @@ Talent Vault is a web application that allows you to manage your candidates and 
 2. Run `make build` to build and run the application using Docker Compose, including database migrations
 4. (Optional) Run `make test-backend` to run the test suite for the backend application
 
+## API Documentation
+
+The API documentation is available at `/docs`.
 
 # Makefile Commands
 ```shell

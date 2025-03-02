@@ -15,7 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from vault.views.docs import get_docs
 
 urlpatterns = [
     path('vault/', include('vault.urls')),
+    path('docs/', get_docs, name='api_docs'),
 ]
