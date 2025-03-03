@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import useGetCandidates from "@/hooks/useGetCandidates";
 import { handleCandidateResumeDownload } from "@/apis";
+import { Candidate } from "@/lib/types";
 
 const Admin = () => {
 	const [page, setPage] = useState(1);
@@ -44,7 +45,7 @@ const Admin = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{data?.candidates.map((candidate) => (
+							{data?.candidates.map((candidate: Candidate) => (
 								<tr key={candidate.id} className="hover:bg-gray-50">
 									<td className="px-4 py-3 border-b border-gray-200">{candidate.full_name}</td>
 									<td className="px-4 py-3 border-b border-gray-200">{candidate.email}</td>
