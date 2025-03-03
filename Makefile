@@ -12,6 +12,10 @@ run:
 run-backend:
 	cd docker && docker-compose --env-file ../.env up -d backend
 
+# Run the frontend application
+run-frontend:
+	cd talentvault-client && npm install && npm run dev
+
 # Run the database container without rebuilding
 run-db:
 	cd docker && docker-compose --env-file ../.env up -d db
@@ -35,6 +39,3 @@ db-terminal:
 # Run tests in the backend container
 test-backend:
 	cd docker && docker-compose --env-file ../.env exec backend python manage.py test vault.tests
-
-run-frontend:
-	cd talentvault-client && npm install && npm run dev
