@@ -1,4 +1,4 @@
-.PHONY: build run stop clean run-backend run-db backend-terminal db-terminal test-backend
+.PHONY: build run stop clean run-backend run-db backend-terminal db-terminal test-backend run-frontend
 
 # Build and run the application
 build:
@@ -36,3 +36,5 @@ db-terminal:
 test-backend:
 	cd docker && docker-compose --env-file ../.env exec backend python manage.py test vault.tests
 
+run-frontend:
+	cd talentvault-client && npm install && npm run dev

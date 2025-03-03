@@ -23,11 +23,18 @@ Talent Vault is a web application that allows you to manage your candidates and 
 - React
 - Tailwind CSS
 
+
+## Prerequisites
+
+- Docker
+- Node.js
+
 ## Setup
 
 1. Clone the repository
 2. Run `make build` to build and run the application using Docker Compose, including database migrations
 4. (Optional) Run `make test-backend` to run the test suite for the backend application
+5. (Optional) Run `make run-frontend` to run the frontend application
 
 ## API Documentation
 

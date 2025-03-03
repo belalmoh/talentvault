@@ -23,10 +23,18 @@ const Admin = () => {
 		<div className="flex justify-center items-center min-h-screen bg-gray-300 p-4">
 			<div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-8 flex flex-col h-[70vh]">
 				<h1 className="text-2xl font-bold text-center mb-6">Candidate List</h1>
-				
-				<div className="overflow-auto flex-grow">
-					<table className="w-full border-collapse">
-						<thead className="sticky top-0 bg-white">
+
+				{data?.candidates.length === 0 && (
+					<div className="flex justify-center items-center h-full">
+						<p className="text-gray-500">No candidates found</p>
+					</div>
+				)}
+
+				{data?.candidates.length > 0 && (
+					<>
+						<div className="overflow-auto flex-grow">
+							<table className="w-full border-collapse">
+								<thead className="sticky top-0 bg-white">
 							<tr className="bg-gray-100">
 								<th className="px-4 py-2 text-left border-b-2 border-gray-200">Name</th>
 								<th className="px-4 py-2 text-left border-b-2 border-gray-200">Email</th>
@@ -71,8 +79,10 @@ const Admin = () => {
 						onClick={() => setPage(page + 1)}
 					>
 						Next
-					</button>
-				</div>
+							</button>
+						</div>
+					</>
+				)}
 			</div>
 		</div>
 	)
