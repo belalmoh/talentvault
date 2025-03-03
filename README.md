@@ -60,3 +60,32 @@ The API documentation is available at `/docs`.
     
     make test-backend # Runs the test suite for the backend application
 ```
+
+# Example cURL Requests for the API
+
+## Create a candidate
+```shell
+curl --location 'http://localhost:8000/vault/candidate/register' \
+--header 'user-name: admin' \
+--header 'password: admin' \
+--form 'full_name="Belal Mohammed"' \
+--form 'email="bello@bello.comxxxxx"' \
+--form 'date_of_birth="1994-05-26"' \
+--form 'years_of_experience="1"' \
+--form 'department_id="1"' \
+--form 'resume=@"/Users/belalmohammed/Documents/__ The Travel Itinerary.pdf"'
+```
+
+## List candidates
+```shell
+curl --location 'http://localhost:8000/vault/candidates?page=1' \
+--header 'X-ADMIN: 1'
+```
+
+## Download a candidate's resume
+```shell
+curl --location 'http://localhost:8000/vault/candidate/1/resume' \
+--header 'X-ADMIN: 1'
+```
+
+

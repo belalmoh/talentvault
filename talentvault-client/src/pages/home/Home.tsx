@@ -1,8 +1,9 @@
 import CandidateForm from "@/components/CandidateForm/CandidateForm";
 
 const Home = () => {
-    return (
+    return (<>
         <CandidateForm />
+    </>
     )
 }
 
