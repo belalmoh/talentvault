@@ -9,18 +9,15 @@ Talent Vault is a web application that allows you to manage your candidates and 
 - Creates candidates
 - List candidates
 - Download resumes
-- Search candidates
 - Filter candidates
-- Sort candidates
 
 ## Technologies
 
 - Python
 - Django
-- Django Rest Framework
-- PostgreSQL
+- MySQL
 - Docker
-- React
+- React with TypeScript
 - Tailwind CSS
 
 
@@ -78,7 +75,7 @@ curl --location 'http://localhost:8000/vault/candidate/register' \
 
 ## List candidates
 ```shell
-curl --location 'http://localhost:8000/vault/candidates?page=1' \
+curl --location 'http://localhost:8000/vault/candidates?page=1&count=10' \
 --header 'X-ADMIN: 1'
 ```
 

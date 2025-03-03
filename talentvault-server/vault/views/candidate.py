@@ -65,7 +65,9 @@ def list_candidates(request):
         else:
             candidates = Candidate.objects.all().order_by('created_at')
 
-        paginator = Paginator(candidates, 10)
+        count = int(request.GET.get('count', 10))
+        
+        paginator = Paginator(candidates, count)
         
         page_number = int(request.GET.get('page', 1))
         # Validate page number is within range
