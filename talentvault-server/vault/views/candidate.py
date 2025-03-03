@@ -103,7 +103,16 @@ def download_resume(request, candidate_id):
 
         candidate = Candidate.objects.get(id=candidate_id)
         
-        response = HttpResponse(candidate.resume.read(), content_type='application/pdf')
+        content_type = 'application/pdf'
+        if candidate.resume.name.endswith('.doc'):
+            content_type = 'application/msword'
+        elif candidate.resume.name.endswith('.docx'):
+            content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif candidate.resume.name.endswith('.pdf'):
+            content_type = 'application/pdf'
+            
+        response = HttpResponse(candidate.resume.read(), content_type=content_type)
+        response['Access-Control-Expose-Headers'] = 'content-disposition'
         response['Content-Disposition'] = f'attachment; filename="{candidate.resume.name}"'
         return response
         

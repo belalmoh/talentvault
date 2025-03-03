@@ -29,3 +29,49 @@ export const handleCandidateSave = async (data: CandidateData) => {
     
     return data;
 }
+
+export const handleCandidateList = async (page: number) => {
+    
+    const myHeaders = new Headers();
+    myHeaders.append("X-ADMIN", "1");
+
+    const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+    };
+
+    const response = await fetch(`http://localhost:8000/vault/candidates?page=${page}`, requestOptions);
+    const jsonResponse = await response.json();
+
+    if (response.status === 400) {
+        throw jsonResponse.error;
+    }
+
+    return jsonResponse;
+}
+
+export const handleCandidateResumeDownload = async (candidateId: string) => {
+    const myHeaders = new Headers();
+    myHeaders.append("X-ADMIN", "1");
+
+    const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+    };
+
+    const response = await fetch(`http://localhost:8000/vault/candidate/${candidateId}/resume`, requestOptions);
+    
+    if (!response.ok) {
+        const jsonResponse = await response.json();
+        throw jsonResponse.error;
+    }
+
+    const blob = await response.blob();
+    const filename = response.headers.get('content-disposition')?.split('filename=')[1]?.replace(/"/g, '');
+
+    
+    return {
+        url: URL.createObjectURL(blob),
+        filename: filename
+    };
+}
