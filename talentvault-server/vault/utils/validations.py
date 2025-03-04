@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 ALLOWED_FILE_TYPES = ["application/pdf", "application/docx", "application/doc"]  # Define allowed MIME types
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB file size limit
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 10 MB file size limit
 
 class CandidateForm(forms.Form):
 
@@ -33,7 +33,7 @@ class CandidateForm(forms.Form):
         file = self.cleaned_data.get('resume')
         if file:
             if file.size > MAX_FILE_SIZE:
-                raise forms.ValidationError("File size exceeds the maximum limit of 10 MB.")
+                raise forms.ValidationError("File size exceeds the maximum limit of 5 MB.")
             if file.content_type not in ALLOWED_FILE_TYPES:
                 raise forms.ValidationError("Invalid file type. Only PDF, DOCX, and DOC files are allowed.")
         return file
