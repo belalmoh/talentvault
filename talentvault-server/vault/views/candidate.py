@@ -3,11 +3,12 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from vault.models.candidate import Candidate, DEPARTMENT_CHOICES
 from vault.utils.validations import CandidateForm
 
+@transaction.atomic
 @csrf_exempt
 @require_http_methods(["POST"])
 def register(request):

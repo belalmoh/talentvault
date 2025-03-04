@@ -7,7 +7,6 @@ import uuid
 
 from storages.backends.s3boto3 import S3Boto3Storage
 from storages.backends.azure_storage import AzureStorage
-from storages.backends.gcloud import GoogleCloudStorage
 
 logger = logging.getLogger('vault.api')
 
@@ -27,16 +26,10 @@ def get_storage():
                 secret_key=settings.STORAGE_CONFIG[storage_type]['AWS_SECRET_ACCESS_KEY'],
                 region_name=settings.STORAGE_CONFIG[storage_type]['AWS_S3_REGION_NAME'],
             )
-        elif storage_type == 'gcs':
-            storage = GoogleCloudStorage(
-                bucket_name=settings.STORAGE_CONFIG[storage_type]['GCS_BUCKET_NAME'],
-                region_name=settings.STORAGE_CONFIG[storage_type]['GCS_REGION_NAME'],
-                credentials=settings.STORAGE_CONFIG[storage_type]['GCS_CREDENTIALS_FILE'],
-            )
         elif storage_type == 'azure':
             storage = AzureStorage(
                 connection_string=settings.STORAGE_CONFIG[storage_type]['AZURE_STORAGE_CONNECTION_STRING'],
-                container=settings.STORAGE_CONFIG[storage_type]['AZURE_STORAGE_CONTAINER'],
+                azure_container=settings.STORAGE_CONFIG[storage_type]['AZURE_STORAGE_CONTAINER']
             )
         else:
             storage = FileSystemStorage(
