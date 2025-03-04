@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -12,7 +12,9 @@ import useSubmit from "@/hooks/useSubmit";
 import { candidateFormSchema } from "@/lib/validations";
 
 const CandidateForm = () => {
-  	const form = useForm<z.infer<typeof candidateFormSchema>>({
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	
+	const form = useForm<z.infer<typeof candidateFormSchema>>({
 		resolver: zodResolver(candidateFormSchema),
 		defaultValues: {
 			full_name: "",
@@ -28,13 +30,16 @@ const CandidateForm = () => {
 
 	const onSubmit = async (data: z.infer<typeof candidateFormSchema>) => {
 		await submit(data);
-
 	};
 
 	useEffect(() => {
 		if (isSuccess) {
 			toast.success('Candidate registered successfully!');
 			form.reset();
+			// Reset file input
+			if (fileInputRef.current) {
+				fileInputRef.current.value = '';
+			}
 		}
 		if (isError) {
 			toast.error(JSON.stringify(error));
@@ -171,7 +176,10 @@ const CandidateForm = () => {
 											}}
 											onBlur={field.onBlur}
 											name={field.name}
-											ref={field.ref}
+											ref={(e) => {
+												field.ref(e);
+												fileInputRef.current = e;
+											}}
 										/>
 									</FormControl>
 									<FormMessage />
