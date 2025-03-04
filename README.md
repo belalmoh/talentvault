@@ -46,6 +46,8 @@ make run # Runs the application containers without rebuilding
 
 make run-backend # Runs only the backend container without rebuilding
 
+make run-frontend # Runs only the frontend application
+
 make run-db # Runs only the database container without rebuilding
 
 make stop # Stops all running containers
