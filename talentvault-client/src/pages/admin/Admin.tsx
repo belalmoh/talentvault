@@ -31,6 +31,12 @@ const Admin = () => {
 					</div>
 				)}
 
+				{isError && (
+					<div className="flex justify-center items-center h-full">
+						<p className="text-red-500">Error fetching candidates</p>
+					</div>
+				)}
+
 				{data?.candidates.length > 0 && (
 					<>
 						<div className="overflow-auto flex-grow">
