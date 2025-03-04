@@ -200,6 +200,9 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': VAULT_LOG_FILE_PATH,
             'formatter': 'verbose',
+            'when': 'midnight',
+            'interval': 1,  # 1 day
+            'backupCount': 30,  # Keep logs for 30 days
         },
         # 'django_file': {
         #     'level': 'INFO',
